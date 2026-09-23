@@ -22,20 +22,22 @@ type Token struct {
 }
 
 type UserInfo struct {
-	Email        string `json:"email"`
-	Birthday     string `json:"birthday"`
-	Hometown     string `json:"hometown"`
+	UserID        uint64             `json:"user_id"`
+	Username      string             `json:"username"`
+	Email         string             `json:"email"`
+	AvatarURL     string             `json:"avatar_url"`
+	StudentID     string             `json:"student_id"`
+	IsMuxiMember  bool               `json:"is_muxi_member"`
+	Roles         []string           `json:"roles"`
+	MemberProfile *MemberProfileInfo `json:"member_profile"`
+	Info          string             `json:"info"`
+}
+
+type MemberProfileInfo struct {
+	RealName     string `json:"real_name"`
 	Group        string `json:"group"`
-	Timejoin     string `json:"timejoin"`
-	Timeleft     string `json:"timeleft"`
-	Username     string `json:"username"`
-	RoleID       uint64 `json:"role_id"`
-	Left         bool   `json:"left"`
-	Info         string `json:"info"`
-	AvatarURL    string `json:"avatar_url"`
+	JoinYear     int    `json:"join_year"`
 	PersonalBlog string `json:"personal_blog"`
 	Github       string `json:"github"`
-	Flickr       string `json:"flickr"`
-	Weibo        string `json:"weibo"`
 	Zhihu        string `json:"zhihu"`
 }

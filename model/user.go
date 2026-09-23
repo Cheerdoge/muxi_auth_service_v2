@@ -6,6 +6,7 @@ import (
 
 	"github.com/Muxi-X/muxi_auth_service_v2/util/captcha"
 	"github.com/ShiinaOrez/GoSecurity/security"
+	"github.com/jinzhu/gorm"
 )
 
 // User represents a registered user.
@@ -111,7 +112,34 @@ func (user *UserModel) VerifyCaptcha(newCap string) bool {
 }
 
 func GetUserInfoByID(id uint64) (*UserInfo, error) {
-	info := &UserInfo{}
-	d := DB.Self.Table("users").Where("id = ?", id).First(&info)
-	return info, d.Error
+	user, err := GetUserByID(id)
+	if err != nil {
+		return nil, err
+	}
+	resp := &UserInfo{
+		UserID:    user.Id,
+		Username:  user.Username,
+		Email:     user.Email,
+		AvatarURL: user.AvatarURL,
+	}
+
+	role, err := GetRoleByID(user.RoleID)
+	if err == nil && role != nil {
+		resp.Roles = []string{role.Name}
+	}
+
+	profile, err := GetMemberProfileByUserID(id)
+	if err == nil {
+		resp.IsMuxiMember = true
+		resp.StudentID = profile.StudentID
+		resp.Roles = append(resp.Roles, "muxi_member")
+		resp.MemberProfile = &MemberProfileInfo{
+			RealName: profile.RealName, Group: profile.Group,
+			JoinYear: profile.JoinYear, Github: profile.Github,
+			PersonalBlog: profile.PersonalBlog,
+		}
+	} else if !gorm.IsRecordNotFoundError(err) {
+		return nil, err
+	}
+	return resp, nil
 }
